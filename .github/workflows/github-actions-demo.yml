@@ -16,3 +16,5 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  call-workflow-2-in-local-repo:
+    uses: ./.github/workflows/context_test.yaml
