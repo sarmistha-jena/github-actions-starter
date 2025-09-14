@@ -16,3 +16,14 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+
+  my_first_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: My first step
+        uses: actions/setup-node@v4
+  CacheTest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache
+        uses: actions/cache@v4.2.4
