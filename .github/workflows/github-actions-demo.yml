@@ -22,8 +22,8 @@ jobs:
     steps:
       - name: My first step
         uses: actions/setup-node@v4
-  CacheTest:
+  my_second_job:
     runs-on: ubuntu-latest
     steps:
-      - name: Cache
-        uses: actions/cache@v4.2.4
+      - uses: actions/javascript-action@v1.0.1
+        name : My 2nd step
