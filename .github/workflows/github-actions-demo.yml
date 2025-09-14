@@ -35,5 +35,7 @@ jobs:
     steps:
       - name: Check out the repository to the runner
         uses: actions/checkout@v5
+      - name: Make the script files executable
+        run: chmod +x my_script.sh
       - name: Run a script
         run: ./my_script.sh
