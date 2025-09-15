@@ -1,0 +1,16 @@
+name: learn github actions
+on: [workflow_dispatch]
+run-name: ${{ github.actor}} - github action workflow
+
+jobs:
+  check-bat-version:
+    name : Checks bat version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g bat
+      - run: bats -v
+      
