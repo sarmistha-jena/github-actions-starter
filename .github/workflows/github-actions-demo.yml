@@ -19,15 +19,15 @@ jobs:
   my_secret_job:
     runs-on: ubuntu-latest
     steps:
-      # - shell: bash
-      #   env:
-      #     SUPER_SECRET: ${{ secrets.SuperSecret }}
-      #   run: |
-      #     echo "$SUPER_SECRET"
-      - name: Hello world action
+      - shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.SuperSecret }}
+        run: |
+          echo "$SUPER_SECRET"
+      - name: "Hello world action"
         with: # Set the secret as an input
           super_secret: ${{ secrets.SuperSecret }}
-          if: super_secret.contains("my secret ")
+          if: ${{ super_secret.contains("my secret ") }}
           run: echo "$SUPER_SECRET"
         
                
