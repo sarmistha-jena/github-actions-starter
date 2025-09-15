@@ -27,7 +27,7 @@ jobs:
       - name: "Hello world action"
         with: # Set the secret as an input
           super_secret: ${{ secrets.SuperSecret }}
-          if: ${{ super_secret.contains("my secret ") }}
+          if: ${{ super_secret.contains('secret') }}
           run: echo "$SUPER_SECRET"
         
                
