@@ -6,6 +6,8 @@ jobs:
   check-bat-version:
     name : Checks bat version
     runs-on: ubuntu-latest
+    outputs:
+      bats_version: ${{ steps.step1.outputs.bats_version }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
@@ -13,4 +15,12 @@ jobs:
           node-version: '20'
       - run: npm install -g bats
       - run: bats -v
-      
+      - id: step1
+        run: echo "bats_version=$(bats -v)" >> "$GITHUB_OUTPUT"
+    
+  use-bat-version:
+    name: Use bats version
+    needs: check-bat-version
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "We got BATS version ${{ needs.check-bat-version.outputs.bats_version }}"
