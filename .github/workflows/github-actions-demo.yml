@@ -24,11 +24,12 @@ jobs:
           SUPER_SECRET: ${{ secrets.SuperSecret }}
         run: |
           echo "$SUPER_SECRET"
-      # - name: Hello world action
-      #   with: # Set the secret as an input
-      #     super_secret: ${{ secrets.SuperSecret }}
-      #     run: echo "$SUPER_SECRET"
-      #   if: super_secret.contains("my secret ")
+      - name: Hello world action
+        with: # Set the secret as an input
+          super_secret: ${{ secrets.SuperSecret }}
+          if: super_secret.contains("my secret ")
+          run: echo "$SUPER_SECRET"
+        
                
   my_first_job:
     runs-on: ubuntu-latest
@@ -52,3 +53,13 @@ jobs:
         run: chmod +x my_script.sh
       - name: Run a script
         run: ./my_script.sh
+  greeting_job:
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Hello
+    steps:
+      - name: "Say Hello Mona it's Monday"
+        if: ${{ env.DAY_OF_WEEK == 'Monday' }}
+        run: echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
+        env:
+          First_Name: Mona
