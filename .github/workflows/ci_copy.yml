@@ -94,7 +94,12 @@ jobs:
         #   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        run: echo "Push to DockerHub"
+        run: | 
+          echo "Push to DockerHub"
+          IMAGE_NAME=sarmistha/my-app
+          GIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "IMAGE=$IMAGE_NAME:$GIT_SHA" >> $GITHUB_ENV
+
         # run: |
         #   IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/java-app
         #   GIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
