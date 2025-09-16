@@ -97,8 +97,8 @@ jobs:
         run: | 
           IMAGE_NAME=sarmistha/my-app
           GIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-          echo "IMAGE=$IMAGE_NAME:$GIT_SHA" >> $GITHUB_ENV
-          echo "Push to DockerHub $IMAGE_NAME:$GIT_SHA ${{ env.IMAGE }}"
+          echo "IMAGE=$IMAGE_NAME:$GIT_SHA" >> $GITHUB_OUTPUT
+          echo "Push to DockerHub $IMAGE_NAME:$GIT_SHA"
 
         # run: |
         #   IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/java-app
@@ -114,8 +114,8 @@ jobs:
     steps:
       - name: Test input        
         run: | 
-          IMG_NAME = ${{ env.IMAGE }}
-          echo "IMG_NAME -- Test image name ${{ env.IMAGE }}"
+          IMG_NAME = ${{ needs.docker_image_create_push.outputs.IMAGE }}
+          echo "IMG_NAME -- Test image name $IMG_NAME"
       # 8. Trigger CD workflow (separate repo or workflow_dispatch)
       - name: Trigger CD workflow
         uses: peter-evans/repository-dispatch@v3
