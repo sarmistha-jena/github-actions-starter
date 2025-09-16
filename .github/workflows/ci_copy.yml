@@ -114,8 +114,7 @@ jobs:
     steps:
       - name: Test input        
         run: | 
-          IMG_NAME = ${{ needs.docker_image_create_push.outputs.IMAGE }}
-          echo "IMG_NAME -- Test image name $IMG_NAME"
+          echo "IMG_NAME -- Test image name ${{ needs.docker_image_create_push.outputs.IMAGE }}"
       # 8. Trigger CD workflow (separate repo or workflow_dispatch)
       - name: Trigger CD workflow
         uses: peter-evans/repository-dispatch@v3
@@ -123,4 +122,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: sarmistha-jena/github-actions-starter
           event-type: deploy
-          client-payload: '{"image":"my-img", "env":"dev"}'
+          client-payload: '{"image":"{{ needs.docker_image_create_push.outputs.IMAGE }}", "env":"dev"}'
