@@ -60,7 +60,7 @@ jobs:
         #     -Dsonar.login=${{ secrets.SONAR_TOKEN }}
   push-to-artifactory:
     runs-on: ubuntu-latest
-    needs: [code-coverage-checks, dependency-vulnerability-checks, code-quality-checks]
+    needs: [dependency-vulnerability-checks, code-quality-checks]
     steps:
       - name: Push artifact to JFrog
         run: echo "Push artifact to JFrog"
@@ -80,7 +80,7 @@ jobs:
 
   docker_image_create_push:
     runs-on : ubuntu-latest
-    needs: [push-to-artifactory]
+    needs: push-to-artifactory
     steps:
       # 7. Build and Push Docker Image
       - name: Checkout repository
