@@ -81,6 +81,8 @@ jobs:
   docker_image_create_push:
     runs-on : ubuntu-latest
     needs: push-to-artifactory
+    outputs:
+      image_tag: ${{ steps.set-image-name.outputs.IMAGE }}
     steps:
       # 7. Build and Push Docker Image
       - name: Checkout repository
@@ -94,6 +96,7 @@ jobs:
         #   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Docker Image
+        id : set-image-name
         run: | 
           IMAGE_NAME=sarmistha/my-app
           GIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
@@ -114,7 +117,7 @@ jobs:
     steps:
       - name: Test input        
         run: | 
-          echo "IMG_NAME -- Test image name ${{ needs.docker_image_create_push.outputs.IMAGE }}"
+          echo "IMG_NAME -- Test image name ${{ needs.docker_image_create_push.outputs.image_tag }}"
       # 8. Trigger CD workflow (separate repo or workflow_dispatch)
       - name: Trigger CD workflow
         uses: peter-evans/repository-dispatch@v3
@@ -122,4 +125,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: sarmistha-jena/github-actions-starter
           event-type: deploy
-          client-payload: '{"image":"${{ needs.docker_image_create_push.outputs.IMAGE }}", "env":"dev"}'
+          client-payload: '{"image":"${{ needs.docker_image_create_push.outputs.image_tag }}", "env":"dev"}'
