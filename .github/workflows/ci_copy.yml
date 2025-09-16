@@ -119,4 +119,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: sarmistha-jena/github-actions-starter
           event-type: deploy
-          client-payload: '{"image":"${{ env.IMAGE }}", "env":"dev"}'
+          client-payload: '{"image":"my-img", "env":"dev"}'
