@@ -23,11 +23,19 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
-
-      - name: Extract inputs
+      - name: Set IMAGE + ENV
         run: |
-          echo "IMAGE=${{ github.event.client_payload.image }}" >> $GITHUB_ENV
-          echo "ENV=${{ github.event.client_payload.env }}" >> $GITHUB_ENV
+          if [ -n "${{ github.event.client_payload.image }}" ]; then
+            echo "IMAGE=${{ github.event.client_payload.image }}" >> $GITHUB_ENV
+            echo "ENV=${{ github.event.client_payload.env }}" >> $GITHUB_ENV
+          else
+            echo "IMAGE=${{ github.event.inputs.image }}" >> $GITHUB_ENV
+            echo "ENV=${{ github.event.inputs.env }}" >> $GITHUB_ENV
+          fi
+      # - name: Extract inputs
+      #   run: |
+      #     echo "IMAGE=${{ github.event.client_payload.image }}" >> $GITHUB_ENV
+      #     echo "ENV=${{ github.event.client_payload.env }}" >> $GITHUB_ENV
       - name: Update deployment.yaml
         run: echo "${{ env.ENV }} and ${{ env.IMAGE }}"
         # run: |
