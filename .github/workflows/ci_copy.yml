@@ -19,11 +19,11 @@ jobs:
         cache: maven
 
     - name: Build and Test
-      #runs : mvn clean verify
-      runs : echo "mvn clean verify"
+      #run : mvn clean verify
+      run : echo "mvn clean verify"
 
     - name: Jacoco run
-      runs: echo "mvn jacoco:report"
+      run: echo "mvn jacoco:report"
 
 
   dependency-vulnerability-checks:
@@ -31,7 +31,7 @@ jobs:
     needs: build-test
     steps:
     - name: OWASP Dependency Check
-      runs: echo "OWASP Dependency Check"
+      run: echo "OWASP Dependency Check"
       # uses: dependency-check/Dependency-Check_Action@main
       # with:
       #   project: "java-app"
@@ -39,7 +39,7 @@ jobs:
       #   format: "ALL"
       #   out: "dependency-check-report"
     - name: Upload Dependency Check Report
-      runs: echo "Upload Dependency Check Report"
+      run: echo "Upload Dependency Check Report"
       # uses: actions/upload-artifact@v4
       # with:
       #   name: dependency-check-report
@@ -50,7 +50,7 @@ jobs:
     needs: build-test
     steps:
       - name: SonarQube Scan
-        runs: echo "SonarQube Scan"
+        run: echo "SonarQube Scan"
         # uses: sonarsource/sonarcloud-github-action@master
         # with:
         #   args: >
@@ -63,7 +63,7 @@ jobs:
     needs: [code-coverage-checks, dependency-vulnerability-checks, code-quality-checks]
     steps:
       - name: Push artifact to JFrog
-        runs: echo "Push artifact to JFrog"
+        run: echo "Push artifact to JFrog"
         # uses: ./.github/actions/artifactory-push # Path to your composite action
         # with:
         #   artifactory-url: ${{ secrets.JFROG_URL }}
