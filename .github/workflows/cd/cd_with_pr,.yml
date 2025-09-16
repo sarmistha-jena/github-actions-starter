@@ -1,4 +1,4 @@
-name: GitOps CD Workflow
+name: GitOps CD Workflow - PR
 
 on:
   # repository_dispatch:
