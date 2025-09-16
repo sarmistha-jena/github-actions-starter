@@ -122,4 +122,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: sarmistha-jena/github-actions-starter
           event-type: deploy
-          client-payload: '{"image":"{{ needs.docker_image_create_push.outputs.IMAGE }}", "env":"dev"}'
+          client-payload: '{"image":"${{ needs.docker_image_create_push.outputs.IMAGE }}", "env":"dev"}'
