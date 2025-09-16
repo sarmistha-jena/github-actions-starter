@@ -1,0 +1,47 @@
+name: 'Push to Artifactory'
+description: 'Sets up JFrog CLI and pushes artifacts to Artifactory'
+inputs:
+  artifactory-url:
+    description: 'The URL of your JFrog Artifactory instance'
+    required: true
+  artifactory-token:
+    description: 'JFrog Artifactory access token or API key'
+    required: true
+  source-path:
+    description: 'The path to the artifact(s) to push'
+    required: true
+  target-repo:
+    description: 'The target repository in Artifactory'
+    required: true
+  build-name:
+    description: '(Optional) Build name for Artifactory build info'
+    required: false
+  build-number:
+    description: '(Optional) Build number for Artifactory build info'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup JFrog CLI
+      uses: jfrog/setup-jfrog-cli@v3 # Use the latest version
+      with:
+        artifactory-url: ${{ inputs.artifactory-url }}
+        artifactory-token: ${{ inputs.artifactory-token }}
+
+    - name: Push Artifacts to Artifactory
+      shell: bash
+      run: |
+        jfrog rt upload "${{ inputs.source-path }}" "${{ inputs.target-repo }}"
+
+    - name: Collect Build Info (Optional)
+      if: inputs.build-name != '' && inputs.build-number != ''
+      shell: bash
+      run: |
+        jfrog rt build-collect "${{ inputs.build-name }}" "${{ inputs.build-number }}"
+
+    - name: Publish Build Info (Optional)
+      if: inputs.build-name != '' && inputs.build-number != ''
+      shell: bash
+      run: |
+        jfrog rt build-publish "${{ inputs.build-name }}" "${{ inputs.build-number }}"

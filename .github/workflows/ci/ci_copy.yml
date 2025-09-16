@@ -1,0 +1,117 @@
+name: Continuous Integration - Create artifacts -Copy
+run-name: CI run
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test:  
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo #Git checkout
+      uses: actions/checkout@v5
+      
+    - name: Set up JDK # Setup JDK on runner
+      uses: actions/setup_jdk@v4
+      with:
+        distribution: temurin
+        java-version: 17
+        cache: maven
+
+    - name: Build and Test
+      #runs : mvn clean verify
+      runs : echo "mvn clean verify"
+
+    - name: Jacoco run
+      runs: echo "mvn jacoco:report"
+
+
+  dependency-vulnerability-checks:
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+    - name: OWASP Dependency Check
+      runs: echo "OWASP Dependency Check"
+      # uses: dependency-check/Dependency-Check_Action@main
+      # with:
+      #   project: "java-app"
+      #   path: "."
+      #   format: "ALL"
+      #   out: "dependency-check-report"
+    - name: Upload Dependency Check Report
+      runs: echo "Upload Dependency Check Report"
+      # uses: actions/upload-artifact@v4
+      # with:
+      #   name: dependency-check-report
+      #   path: dependency-check-report
+
+  code-quality-checks:
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - name: SonarQube Scan
+        runs: echo "SonarQube Scan"
+        # uses: sonarsource/sonarcloud-github-action@master
+        # with:
+        #   args: >
+        #     -Dsonar.projectKey=my-org_my-java-app
+        #     -Dsonar.organization=my-org
+        #     -Dsonar.host.url=https://sonarcloud.io
+        #     -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+  push-to-artifactory:
+    runs-on: ubuntu-latest
+    needs: [code-coverage-checks, dependency-vulnerability-checks, code-quality-checks]
+    steps:
+      - name: Push artifact to JFrog
+        runs: echo "Push artifact to JFrog"
+        # uses: ./.github/actions/artifactory-push # Path to your composite action
+        # with:
+        #   artifactory-url: ${{ secrets.JFROG_URL }}
+        #   artifactory-token: ${{ secrets.JFROG_ACCESS_TOKEN }}
+        #   source-path: 'path/to/your/artifact.zip' # Replace with your artifact path
+        #   target-repo: 'my-app-repo' # Replace with your target repository
+        #   build-name: 'MyBuild' # Optional
+        #   build-number: ${{ github.run_number }} # Optional  
+        # # run: |
+        #   curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} \
+        #     -T target/myapp.jar \
+        #     "https://mycompany.jfrog.io/artifactory/libs-release-local/myapp/myapp-1.0.0.jar"
+
+
+  docker_image_create_push:
+    runs-on : ubuntu-latest
+    needs: [push-to-artifactory]
+    steps:
+      # 7. Build and Push Docker Image
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: echo "Login to DockerHub"
+        # uses: docker/login-action@v3
+        # with:
+        #   username: ${{ secrets.DOCKERHUB_USERNAME }}
+        #   password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: echo "Push to DockerHub"
+        # run: |
+        #   IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/java-app
+        #   GIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+        #   echo "IMAGE=$IMAGE_NAME:$GIT_SHA" >> $GITHUB_ENV
+        #   docker build -t $IMAGE_NAME:$GIT_SHA -t $IMAGE_NAME:latest .
+        #   docker push $IMAGE_NAME:$GIT_SHA
+        #   docker push $IMAGE_NAME:latest
+      
+  trigger-cd:
+    runs-on: ubuntu-latest
+    needs: docker_image_create_push
+    steps:
+      # 8. Trigger CD workflow (separate repo or workflow_dispatch)
+      - name: Trigger CD workflow
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: sarmistha-jena/github-actions-starter
+          event-type: deploy
+          client-payload: '{"image":"${{ env.IMAGE }}", "env":"dev"}'

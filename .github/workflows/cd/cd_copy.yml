@@ -1,0 +1,35 @@
+name: Deployment workflow - Copy
+on:
+  repository_dispatch:
+    types: [deploy]
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Docker image tag to deploy"
+        required: true
+      env:
+        description: "Environment to deploy to (dev/qa/prod)"
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.input.env}} || ${{ github.event.payload.env}}
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Extract inputs
+        run: |
+          echo "IMAGE=${{ github.event.client_payload.image }}" >> $GITHUB_ENV
+          echo "ENV=${{ github.event.client_payload.env }}" >> $GITHUB_ENV
+      - name: Update deployment.yaml
+        run: echo "${{ env.ENV }} and ${{ env.IMAGE }}""
+        # run: |
+        #   sed -i "s|image: .*|image: ${{ env.IMAGE }}|g" ${{ env.ENV }}/deployment.yaml
+
