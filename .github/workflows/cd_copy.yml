@@ -29,7 +29,7 @@ jobs:
           echo "IMAGE=${{ github.event.client_payload.image }}" >> $GITHUB_ENV
           echo "ENV=${{ github.event.client_payload.env }}" >> $GITHUB_ENV
       - name: Update deployment.yaml
-        run: echo "${{ env.ENV }} and ${{ env.IMAGE }}""
+        run: echo "${{ env.ENV }} and ${{ env.IMAGE }}"
         # run: |
         #   sed -i "s|image: .*|image: ${{ env.IMAGE }}|g" ${{ env.ENV }}/deployment.yaml
 
