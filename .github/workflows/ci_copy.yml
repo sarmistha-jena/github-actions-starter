@@ -112,6 +112,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker_image_create_push
     steps:
+      - name: Test input        
+        run: | 
+          IMG_NAME = ${{ env.IMAGE }}
+          echo "IMG_NAME -- Test image name ${{ env.IMAGE }}"
       # 8. Trigger CD workflow (separate repo or workflow_dispatch)
       - name: Trigger CD workflow
         uses: peter-evans/repository-dispatch@v3
